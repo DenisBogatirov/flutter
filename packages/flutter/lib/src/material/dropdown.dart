@@ -945,9 +945,8 @@ class DropdownButtonFormField<T> extends FormField<T> {
   /// The [DropdownButton] [items] parameters must not be null.
   DropdownButtonFormField({
     Key key,
-    T value,
+    T initialValue,
     @required List<DropdownMenuItem<T>> items,
-    this.onChanged,
     InputDecoration decoration = const InputDecoration(),
     FormFieldSetter<T> onSaved,
     FormFieldValidator<T> validator,
@@ -956,18 +955,18 @@ class DropdownButtonFormField<T> extends FormField<T> {
        super(
          key: key,
          onSaved: onSaved,
-         initialValue: value,
+         initialValue: initialValue,
          validator: validator,
          builder: (FormFieldState<T> field) {
            final InputDecoration effectiveDecoration = decoration
              .applyDefaults(Theme.of(field.context).inputDecorationTheme);
            return InputDecorator(
              decoration: effectiveDecoration.copyWith(errorText: field.errorText),
-             isEmpty: value == null,
+             isEmpty: field.value == null,
              child: DropdownButtonHideUnderline(
                child: DropdownButton<T>(
                  isDense: true,
-                 value: value,
+                 value:field.value,
                  items: items,
                  hint: hint,
                  onChanged: field.didChange,
@@ -977,21 +976,6 @@ class DropdownButtonFormField<T> extends FormField<T> {
          }
        );
 
-  /// Called when the user selects an item.
-  final ValueChanged<T> onChanged;
-
   @override
-  FormFieldState<T> createState() => _DropdownButtonFormFieldState<T>();
-}
-
-class _DropdownButtonFormFieldState<T> extends FormFieldState<T> {
-  @override
-  DropdownButtonFormField<T> get widget => super.widget;
-
-  @override
-  void didChange(T value) {
-    super.didChange(value);
-    if (widget.onChanged != null)
-      widget.onChanged(value);
-  }
+  FormFieldState<T> createState() => FormFieldState<T>();
 }

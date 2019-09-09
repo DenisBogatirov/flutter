@@ -259,6 +259,8 @@ void main() {
 
   testWidgets('Dropdown form field', (WidgetTester tester) async {
     String value = 'one';
+    String savedValue;
+    final GlobalKey<FormFieldState<String>> fieldKey = GlobalKey<FormFieldState<String>>();
 
     await tester.pumpWidget(
       StatefulBuilder(
@@ -266,7 +268,8 @@ void main() {
           return MaterialApp(
             home: Material(
               child: DropdownButtonFormField<String>(
-                value: value,
+                key: fieldKey,
+                initialValue: value,
                 hint: const Text('Select Value'),
                 decoration: const InputDecoration(
                   prefixIcon: Icon(Icons.fastfood)
@@ -277,10 +280,8 @@ void main() {
                     child: Text(val),
                   );
                 }).toList(),
-                onChanged: (String v) {
-                  setState(() {
-                    value = v;
-                  });
+                onSaved: (String v) {
+                  savedValue = v;
                 },
                 validator: (String v) => v == null ? 'Must select value' : null,
               ),
@@ -296,7 +297,9 @@ void main() {
     await tester.tap(find.text('three').last);
     await tester.pump();
     await tester.pumpAndSettle();
-    expect(value, equals('three'));
+    fieldKey.currentState.save();
+    expect(value, equals('one'));
+    expect(savedValue, equals('three'));
   });
 
   testWidgets('Dropdown in ListView', (WidgetTester tester) async {
